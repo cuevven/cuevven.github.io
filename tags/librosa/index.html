@@ -144,13 +144,22 @@
         <span class="column is-narrow">
             
             
-            17 分钟 读完 (约 2579 字)
+            17 分钟 读完 (约 2592 字)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？</p>
+<h2 id="需求＆思路"><a href="#需求＆思路" class="headerlink" title="需求＆思路"></a>需求＆思路</h2><p>我的思路是这样子的：</p>
+<ol>
+<li>这个视频是 1080p 30fps；</li>
+<li>我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示；</li>
+<li>视频长度和 BGM 长度匹配；</li>
+<li>获取相片并将相片分辨率处理成和视频一样；</li>
+<li>按节拍创建剪辑片段；</li>
+<li>合并剪辑，生成视频</li>
+</ol>
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
 <li>由于我机器上使用的是 python 3 的环境，所以需要有 python 3。</li>
 <li>建议在 python 的虚拟环境中运行这个项目。</li>
