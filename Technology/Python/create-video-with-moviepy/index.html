@@ -24,7 +24,7 @@
 <meta property="og:site_name" content="從火星看地球">
 <meta property="og:description" content="起因最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？ 需求＆思路我的思路是这样子的：  这个视频是 1080p 30fps； 我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示； 视频长度和 BGM 长度匹配； 获取相片并将相片分辨率处理成和视频一样； 按节拍创建剪辑片段； 合并剪辑，生成视频  准备工作">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-07-23T09:47:28.527Z">
+<meta property="og:updated_time" content="2019-07-23T10:24:35.454Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Create video with Moviepy">
 <meta name="twitter:description" content="起因最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？ 需求＆思路我的思路是这样子的：  这个视频是 1080p 30fps； 我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示； 视频长度和 BGM 长度匹配； 获取相片并将相片分辨率处理成和视频一样； 按节拍创建剪辑片段； 合并剪辑，生成视频  准备工作">
@@ -206,7 +206,7 @@
         <span class="column is-narrow">
             
             
-            17 分钟 读完 (约 2592 字)
+            17 分钟 读完 (约 2600 字)
         </span>
         
     </div>
@@ -235,7 +235,7 @@
 <p>我用的是 macbook，所有的命令都是在 macos 环境中执行。linux 的过程大同小异，windows 下需要自行搞定 python。</p>
 </blockquote>
 <p>先分析一下最终的目录结构和文件</p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── ./createVideoWithMoviepy.py <span class="hljs-comment"># 这篇要讲的主要的东西</span></span><br><span class="line">├── ./dist</span><br><span class="line">│   └── ./dist/1353112775.mp4 <span class="hljs-comment"># 最后生成的视频，脚本会自动创建</span></span><br><span class="line">├── ./src</span><br><span class="line">│   ├── ./src/font <span class="hljs-comment"># 如果要加字幕，这里放字体</span></span><br><span class="line">│   ├── ./src/images -&gt; ~/.../idols/images_origin <span class="hljs-comment"># 资源源文件目录。这里是一个软链接，下文会解释</span></span><br><span class="line">│   ├── ./src/imgs <span class="hljs-comment"># 处理过的图片资源目录</span></span><br><span class="line">│   ├── ./src/music <span class="hljs-comment"># BGM 目录</span></span><br><span class="line">│   └── ./src/subtitles <span class="hljs-comment"># 如果有字幕，字幕的纯文本文档放在这里</span></span><br><span class="line">└── ./utils.py <span class="hljs-comment"># 一些工具脚本</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── ./createVideoWithMoviepy.py <span class="hljs-comment"># 这篇要讲的主要的东西</span></span><br><span class="line">├── ./dist</span><br><span class="line">│   └── ./dist/1353112775.mp4 <span class="hljs-comment"># 最后生成的视频，脚本会自动创建</span></span><br><span class="line">├── ./src</span><br><span class="line">│   ├── ./src/font <span class="hljs-comment"># 如果要加字幕，这里放字体</span></span><br><span class="line">│   ├── ./src/images -&gt; ~/.../idols/images_origin <span class="hljs-comment"># 资源源文件目录。这里是一个软链接，下文会解释</span></span><br><span class="line">│   ├── ./src/imgs <span class="hljs-comment"># 处理过的图片资源目录，脚本会自动创建</span></span><br><span class="line">│   ├── ./src/music <span class="hljs-comment"># BGM 目录</span></span><br><span class="line">│   └── ./src/subtitles <span class="hljs-comment"># 如果有字幕，字幕的纯文本文档放在这里</span></span><br><span class="line">└── ./utils.py <span class="hljs-comment"># 一些工具脚本</span></span><br></pre></td></tr></table></figure>
 
 <p>假设 python3 环境已经存在。</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 创建项目目录</span></span><br><span class="line">mkdir -p ./&#123;moviepy/dist,moviepy/src/imgs,moviepy/src/music&#125;</span><br></pre></td></tr></table></figure>
