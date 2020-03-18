@@ -2,7 +2,7 @@
 <html class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8">
-<title>從火星看地球</title>
+<title>在 vue-element-admin 怎样动态生成路由配置？ - 從火星看地球</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -16,14 +16,19 @@
 
 
 
-    <meta name="description" content="Life is Fantastic">
-<meta property="og:type" content="website">
-<meta property="og:title" content="從火星看地球">
-<meta property="og:url" content="https://cuevven.github.io/index.html">
+    <meta name="description" content="起因事情是这样的，项目里需要对路由和按钮配置权限，所以会涉及到动态输出路由的问题，然后前端用的是 vue-element-admin ，看项目里是支持动态加载的，但是官方文档里对这块说得…算是语焉不详吧。 然后我翻了翻 issue 挺多人在问的，也有不少人给出了解决方案。嗯，我权当整理一下，怕年纪大容易忘。 思路因为 vue-element-admin 主要是用于后台管理的框架，所以访问流程大致是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 vue-element-admin 怎样动态生成路由配置？">
+<meta property="og:url" content="https://cuevven.github.io/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/index.html">
 <meta property="og:site_name" content="從火星看地球">
-<meta property="og:description" content="Life is Fantastic">
+<meta property="og:description" content="起因事情是这样的，项目里需要对路由和按钮配置权限，所以会涉及到动态输出路由的问题，然后前端用的是 vue-element-admin ，看项目里是支持动态加载的，但是官方文档里对这块说得…算是语焉不详吧。 然后我翻了翻 issue 挺多人在问的，也有不少人给出了解决方案。嗯，我权当整理一下，怕年纪大容易忘。 思路因为 vue-element-admin 主要是用于后台管理的框架，所以访问流程大致是">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-18T08:26:06.000Z">
+<meta property="article:modified_time" content="2020-03-18T16:52:57.618Z">
 <meta property="article:author" content="Cuevven">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="vue-element-admin">
 <meta name="twitter:card" content="summary">
 
 
@@ -107,6 +112,66 @@
             </a>
             
             
+            <div class="navbar-item is-hoverable has-dropdown is-hidden-mobile is-hidden-tablet-only toc">
+                <a class="navbar-item" title="目录">
+                    <i class="fa fa-list"></i>
+                </a>
+                <div class="navbar-dropdown is-right">
+                    
+                    
+                    
+                    
+                    <a class="navbar-item" href="#起因">1&nbsp;&nbsp;<b>起因</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#思路">2&nbsp;&nbsp;<b>思路</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#准备工作：路由表的前端结构和数据库中数据结构">3&nbsp;&nbsp;<b>准备工作：路由表的前端结构和数据库中数据结构</b></a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#路由表的前端结构">3.1&nbsp;&nbsp;路由表的前端结构</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#路由表在数据库中的数据结构">3.2&nbsp;&nbsp;路由表在数据库中的数据结构</a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#建立路由组件映射表">4&nbsp;&nbsp;<b>建立路由组件映射表</b></a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#由前端维护一份静态路由组件映射表">4.1&nbsp;&nbsp;由前端维护一份静态路由组件映射表</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#根据后端返回的路由表动态替换路由组件映射">4.2&nbsp;&nbsp;根据后端返回的路由表动态替换路由组件映射</a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#生成动态路由">5&nbsp;&nbsp;<b>生成动态路由</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#issue-中的相关讨论">6&nbsp;&nbsp;<b>issue 中的相关讨论</b></a>
+                    
+                </div>
+            </div>
+            
             
             <a class="navbar-item" title="GitHub" href="https://github.com/cuevven" target="_blank" rel="noopener">
                 
@@ -121,11 +186,10 @@
 
     <section class="section">
     <div class="container">
-    
-        <article class="article content gallery" itemscope itemprop="blogPost">
+    <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            <a href="/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/" itemprop="url">在 vue-element-admin 怎样动态生成路由配置？</a>
+            在 vue-element-admin 怎样动态生成路由配置？
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
@@ -214,70 +278,58 @@
     
     </div>
     
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/javascript/">#javascript</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/vue/">#vue</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/vue-element-admin/">#vue-element-admin</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/Technology/Python/create-video-with-moviepy/">Create video with Moviepy</a>
+            
+        </span>
+    </div>
     
 </article>
 
 
 
 
+<div class="comments">
+    <h3 class="title is-4">评论</h3>
     
-        <article class="article content gallery" itemscope itemprop="blogPost">
-    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://cuevven.github.io/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/';
+        this.page.identifier = 'Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/';
         
-            <a href="/Technology/Python/create-video-with-moviepy/" itemprop="url">Create video with Moviepy</a>
+        this.language = 'zh';
         
-    </h1>
-    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
-        <span class="column is-narrow">
-            <time datetime="2019-07-21T13:21:47.000Z" itemprop="datePublished">7月 21 2019</time>
-        </span>
-        
-        <span class="column is-narrow article-category">
-            <i class="far fa-folder"></i>
-            <a class="article-category-link" href="/categories/Technology/">Technology</a><span>></span><a class="article-category-link" href="/categories/Technology/Python/">Python</a>
-        </span>
-        
-        
-        <span class="column is-narrow">
-            
-            
-            18 分钟 读完 (约 2668 字)
-        </span>
-        
-    </div>
-    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
-    
-        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？</p>
-<h2 id="需求＆思路"><a href="#需求＆思路" class="headerlink" title="需求＆思路"></a>需求＆思路</h2><p>我的思路是这样子的：</p>
-<ol>
-<li>这个视频是 1080p 30fps；</li>
-<li>我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示；</li>
-<li>视频长度和 BGM 长度匹配；</li>
-<li>获取相片并将相片分辨率处理成和视频一样；</li>
-<li>按节拍创建剪辑片段；</li>
-<li>合并剪辑，生成视频</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
-<li>由于我机器上使用的是 python 3 的环境，所以需要有 python 3。</li>
-<li>建议在 python 的虚拟环境中运行这个项目。</li>
-<li>在虚拟环境中安装 <code>moviepy</code> <code>librosa</code> <code>click</code>三个包。</li>
-<li>如果要加字幕，还需要安装 <code>imagemagick</code>。</li>
-<li>如果需要对字幕做分词处理，再安装一个 <code>jieba</code>。</li>
-</ol>
-        <p class="article-more-link">
-            <a href="/Technology/Python/create-video-with-moviepy/#more">阅读更多</a>
-        </p>
-    
-    </div>
-    
-    
-</article>
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'seeing-the-earth-from-mars' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
 
-
-
-
+<div id="disqus_thread">
     
-    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+</div>
+
     </div>
 </section>
     <footer class="footer">
