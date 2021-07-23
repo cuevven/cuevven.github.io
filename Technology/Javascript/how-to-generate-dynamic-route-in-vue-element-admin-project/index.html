@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>在 vue-element-admin 怎样动态生成路由配置？ - 從火星看地球</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Life is Fantastic">
+
+
+
+
+
+    <meta name="description" content="起因事情是这样的，项目里需要对路由和按钮配置权限，所以会涉及到动态输出路由的问题，然后前端用的是 vue-element-admin ，看项目里是支持动态加载的，但是官方文档里对这块说得…算是语焉不详吧。 然后我翻了翻 issue 挺多人在问的，也有不少人给出了解决方案。嗯，我权当整理一下，怕年纪大容易忘。 思路因为 vue-element-admin 主要是用于后台管理的框架，所以访问流程大致是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 vue-element-admin 怎样动态生成路由配置？">
+<meta property="og:url" content="https://cuevven.github.io/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/index.html">
+<meta property="og:site_name" content="從火星看地球">
+<meta property="og:description" content="起因事情是这样的，项目里需要对路由和按钮配置权限，所以会涉及到动态输出路由的问题，然后前端用的是 vue-element-admin ，看项目里是支持动态加载的，但是官方文档里对这块说得…算是语焉不详吧。 然后我翻了翻 issue 挺多人在问的，也有不少人给出了解决方案。嗯，我权当整理一下，怕年纪大容易忘。 思路因为 vue-element-admin 主要是用于后台管理的框架，所以访问流程大致是">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-18T08:26:06.000Z">
+<meta property="article:modified_time" content="2021-06-14T15:43:01.564Z">
+<meta property="article:author" content="Cuevven">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="vue-element-admin">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    從火星看地球
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/#">Photograph</a>
+            
+            <a class="navbar-item "
+               href="/categories/Technology">Technology</a>
+            
+            <a class="navbar-item "
+               href="/categories/Notes">Notes</a>
+            
+            <a class="navbar-item "
+               href="/#">About</a>
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="搜索" href="javascript:;">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            <div class="navbar-item is-hoverable has-dropdown is-hidden-mobile is-hidden-tablet-only toc">
+                <a class="navbar-item" title="目录">
+                    <i class="fa fa-list"></i>
+                </a>
+                <div class="navbar-dropdown is-right">
+                    
+                    
+                    
+                    
+                    <a class="navbar-item" href="#起因">1&nbsp;&nbsp;<b>起因</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#思路">2&nbsp;&nbsp;<b>思路</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#准备工作：路由表的前端结构和数据库中数据结构">3&nbsp;&nbsp;<b>准备工作：路由表的前端结构和数据库中数据结构</b></a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#路由表的前端结构">3.1&nbsp;&nbsp;路由表的前端结构</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#路由表在数据库中的数据结构">3.2&nbsp;&nbsp;路由表在数据库中的数据结构</a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#建立路由组件映射表">4&nbsp;&nbsp;<b>建立路由组件映射表</b></a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#由前端维护一份静态路由组件映射表">4.1&nbsp;&nbsp;由前端维护一份静态路由组件映射表</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#根据后端返回的路由表动态替换路由组件映射">4.2&nbsp;&nbsp;根据后端返回的路由表动态替换路由组件映射</a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#生成动态路由">5&nbsp;&nbsp;<b>生成动态路由</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#issue-中的相关讨论">6&nbsp;&nbsp;<b>issue 中的相关讨论</b></a>
+                    
+                </div>
+            </div>
+            
+            
+            <a class="navbar-item" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            在 vue-element-admin 怎样动态生成路由配置？
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2020-03-18T08:26:06.000Z" itemprop="datePublished">3月 18 2020</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/Technology/">Technology</a><span>></span><a class="article-category-link" href="/categories/Technology/Javascript/">Javascript</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            17 分钟 读完 (约 2565 字)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>事情是这样的，项目里需要对路由和按钮配置权限，所以会涉及到动态输出路由的问题，然后前端用的是 <code>vue-element-admin</code> ，看项目里是支持动态加载的，但是官方文档里对这块说得…算是语焉不详吧。</p>
+<p>然后我翻了翻 issue 挺多人在问的，也有不少人给出了解决方案。嗯，我权当整理一下，怕年纪大容易忘。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>因为 <code>vue-element-admin</code> 主要是用于后台管理的框架，所以访问流程大致是这样子的：</p>
+<ol>
+<li>发送登录请求</li>
+<li>验证成功，返回 token</li>
+<li>根据 token 返回当前用户信息，其中包括当前用户的角色，以及所属角色能访问的路由</li>
+<li>前端创建一个路由组件映射表，主要作用是将后端返回的 component 的值替换为可执行的对象</li>
+<li>将清洗过的路由表和前端存在的路由表合并</li>
+<li>重载路由表，完成</li>
+</ol>
+<p>其实核心在上面的第 4 条。根据项目 issue 里作者和其他人提供的方法，有两种映射表的创建方式：</p>
+<ol>
+<li>前端创建创建一份静态的路由组件映射表</li>
+<li>根据后端返回的路由表动态替换</li>
+</ol>
+<p>我个人倾向于向后端录入一份路由表，然后再动态匹配。这样子只需要维护一份路由表，而不是一份路由表和一份路由组件映射表。</p>
+<span id="more"></span>
+
+<p>我目前在使用的 <code>vue-element-admin</code> 版本，可能和 issue 里大家讨论时的版本有比较大的差异，所以接下来的过程和代码，建立在 <code>vue-element-admin version: 4.2.1</code> 上。</p>
+<h2 id="准备工作：路由表的前端结构和数据库中数据结构"><a href="#准备工作：路由表的前端结构和数据库中数据结构" class="headerlink" title="准备工作：路由表的前端结构和数据库中数据结构"></a>准备工作：路由表的前端结构和数据库中数据结构</h2><h3 id="路由表的前端结构"><a href="#路由表的前端结构" class="headerlink" title="路由表的前端结构"></a>路由表的前端结构</h3><p>先来看看框架的路由表长啥样。</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="hljs-attr">path</span>: <span class="hljs-string">'/example'</span>,</span><br><span class="line">  <span class="hljs-attr">component</span>: Layout,</span><br><span class="line">  <span class="hljs-attr">redirect</span>: <span class="hljs-string">'/example/table'</span>,</span><br><span class="line">  <span class="hljs-attr">name</span>: <span class="hljs-string">'Example'</span>,</span><br><span class="line">  <span class="hljs-attr">meta</span>: { <span class="hljs-attr">title</span>: <span class="hljs-string">'Example'</span>, <span class="hljs-attr">icon</span>: <span class="hljs-string">'example'</span>, <span class="hljs-attr">roles</span>: [<span class="hljs-string">'admin'</span>, <span class="hljs-string">'editor'</span>] },</span><br><span class="line">  <span class="hljs-attr">children</span>: [</span><br><span class="line">    {</span><br><span class="line">      <span class="hljs-attr">path</span>: <span class="hljs-string">'tree'</span>,</span><br><span class="line">      <span class="hljs-attr">name</span>: <span class="hljs-string">'Tree'</span>,</span><br><span class="line">      <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@/views/tree/index'</span>),</span><br><span class="line">      <span class="hljs-attr">meta</span>: { <span class="hljs-attr">title</span>: <span class="hljs-string">'Tree'</span>, <span class="hljs-attr">icon</span>: <span class="hljs-string">'tree'</span> }</span><br><span class="line">    },</span><br><span class="line">    {</span><br><span class="line">      <span class="hljs-attr">path</span>: <span class="hljs-string">'form'</span>,</span><br><span class="line">      <span class="hljs-attr">name</span>: <span class="hljs-string">'Form'</span>,</span><br><span class="line">      <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@/views/form/index'</span>),</span><br><span class="line">      <span class="hljs-attr">meta</span>: { <span class="hljs-attr">title</span>: <span class="hljs-string">'Form'</span>, <span class="hljs-attr">icon</span>: <span class="hljs-string">'form'</span> }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这个就是一个拥有两个子菜单项的路由表。下面这个是另一种形式的。</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="hljs-attr">path</span>: <span class="hljs-string">'/icon'</span>,</span><br><span class="line">  <span class="hljs-attr">component</span>: Layout,</span><br><span class="line">  <span class="hljs-attr">alwaysShow</span>: <span class="hljs-literal">true</span>,</span><br><span class="line">  <span class="hljs-attr">children</span>: [</span><br><span class="line">    {</span><br><span class="line">      <span class="hljs-attr">path</span>: <span class="hljs-string">'index'</span>,</span><br><span class="line">      <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@/views/icons/index'</span>),</span><br><span class="line">      <span class="hljs-attr">name</span>: <span class="hljs-string">'Icons'</span>,</span><br><span class="line">      <span class="hljs-attr">meta</span>: { <span class="hljs-attr">title</span>: <span class="hljs-string">'icons'</span>, <span class="hljs-attr">icon</span>: <span class="hljs-string">'icon'</span>, <span class="hljs-attr">noCache</span>: <span class="hljs-literal">true</span> }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是个只显示一个主菜单而没有子菜单项的路由表。当然，框架中并不只这两种方式，这只是我们需要的两种方式。</p>
+<blockquote>
+<p>提示：再留意一下这两段数据中，都有个叫 <code>component</code> 的字段，表示的是，路由绑定的视图，这个应该都看得懂不用多作解释了。然后这里就是动态生成路由表的关键之处。我把这个字段的意思表示为 <strong><em>路由组件映射</em></strong> 。</p>
+</blockquote>
+<p>component 的值，如果是从后端返回的，一定会是字符串，而且这时候，前端代码也已经由 webpack 打包好了，所以没办法起作用。那么就需要用映射表的方法，异步加载，让视图生效，从而实现动态加载路由需求。</p>
+<h3 id="路由表在数据库中的数据结构"><a href="#路由表在数据库中的数据结构" class="headerlink" title="路由表在数据库中的数据结构"></a>路由表在数据库中的数据结构</h3><p>那么要把路由和权限结合起来，当然不能纯人工去维护，所以要在后端保存一份路由表，而且还指定了权限角色的。翻看了 <code>vue-element-admin</code> 的文档和代码，发现路由支持深度嵌套，而且父、子路由的结构是高度相似的，并没有做一个明显的区分，基于这个原因，父子的数据结构将是完全一致的，其中只有两个字段的赋值区别，下面再说。</p>
+<p>鉴于此，以及框架支持路由深度嵌套，所以最后的菜单项，都可能是别的菜单的父或者子。这方面在这篇文不深入讨论。</p>
+<p>因为我用的 mongodb ，我还是希望用比较平的结构来处理路由，下面是我的 schema 定义。</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> MenuSchema = <span class="hljs-keyword">new</span> mongoose.Schema({</span><br><span class="line">  <span class="hljs-attr">__v</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Number</span>, <span class="hljs-attr">select</span>: <span class="hljs-literal">false</span> },</span><br><span class="line">  <span class="hljs-attr">name</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span>, <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span> }, <span class="hljs-comment">//设定路由的名字，一定要填写不然使用&lt;keep-alive&gt;时会出现各种问题</span></span><br><span class="line">  <span class="hljs-attr">path</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span>, <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span> },</span><br><span class="line">  <span class="hljs-attr">component</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span>, <span class="hljs-attr">default</span>: <span class="hljs-string">'Layout'</span> },</span><br><span class="line">  <span class="hljs-attr">redirect</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span>, <span class="hljs-attr">default</span>: <span class="hljs-string">'noRedirect'</span> }, <span class="hljs-comment">//重定向地址，在面包屑中点击会重定向去的地址</span></span><br><span class="line">  <span class="hljs-attr">hidden</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Boolean</span>, <span class="hljs-attr">default</span>: <span class="hljs-literal">false</span> }, <span class="hljs-comment">// 不在侧边栏显示</span></span><br><span class="line">  <span class="hljs-comment">// 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面</span></span><br><span class="line">  <span class="hljs-comment">// 只有一个时，会将那个子路由当做根路由显示在侧边栏--如引导页面</span></span><br><span class="line">  <span class="hljs-comment">// 若你想不管路由下面的 children 声明的个数都显示你的根路由</span></span><br><span class="line">  <span class="hljs-comment">// 你可以设置 alwaysShow: true，这样它就会忽略之前定义的规则，一直显示根路由</span></span><br><span class="line">  <span class="hljs-attr">alwaysShow</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Boolean</span>, <span class="hljs-attr">default</span>: <span class="hljs-literal">true</span> }, <span class="hljs-comment">//一直显示根路由</span></span><br><span class="line">  <span class="hljs-attr">meta</span>: {</span><br><span class="line">    <span class="hljs-attr">role</span>: [{</span><br><span class="line">      <span class="hljs-attr">type</span>: mongoose.Schema.Types.ObjectId, <span class="hljs-attr">ref</span>: <span class="hljs-string">'Role'</span>,</span><br><span class="line">    }], <span class="hljs-comment">//设置该路由进入的权限，支持多个权限叠加。你可以在根路由设置权限，这样它下面所有的子路由都继承了这个权限</span></span><br><span class="line">    <span class="hljs-attr">title</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span>, <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span> }, <span class="hljs-comment">//设置该路由在侧边栏和面包屑中展示的名字</span></span><br><span class="line">    <span class="hljs-attr">icon</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">String</span> }, <span class="hljs-comment">//设置该路由的图标</span></span><br><span class="line">    <span class="hljs-attr">noCache</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Boolean</span>, <span class="hljs-attr">default</span>: <span class="hljs-literal">false</span> }, <span class="hljs-comment">//如果设置为true，则不会被 &lt;keep-alive&gt; 缓存(默认 false)</span></span><br><span class="line">    <span class="hljs-attr">breadcrumb</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Boolean</span>, <span class="hljs-attr">default</span>: <span class="hljs-literal">true</span> }, <span class="hljs-comment">// 如果设置为false，则不会在breadcrumb面包屑中显示</span></span><br><span class="line">  },</span><br><span class="line">  <span class="hljs-attr">children</span>: [{</span><br><span class="line">    <span class="hljs-attr">type</span>: mongoose.Schema.Types.ObjectId, <span class="hljs-attr">ref</span>: <span class="hljs-string">'Menu'</span>,</span><br><span class="line">    <span class="hljs-attr">autopopulate</span>: { <span class="hljs-attr">maxDepth</span>: <span class="hljs-number">3</span> }</span><br><span class="line">  }],</span><br><span class="line">  <span class="hljs-attr">extra</span>: { <span class="hljs-attr">type</span>: mongoose.Schema.Types.Mixed },</span><br><span class="line">  <span class="hljs-attr">createdAt</span>: { <span class="hljs-attr">type</span>: <span class="hljs-built_in">Date</span>, <span class="hljs-attr">default</span>: <span class="hljs-built_in">Date</span>.now }</span><br><span class="line">}, {</span><br><span class="line">  <span class="hljs-attr">id</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">  <span class="hljs-attr">toObject</span>: { <span class="hljs-attr">virtuals</span>: <span class="hljs-literal">true</span> },</span><br><span class="line">  <span class="hljs-attr">toJSON</span>: { <span class="hljs-attr">virtuals</span>: <span class="hljs-literal">true</span> }</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line">MenuSchema.virtual(<span class="hljs-string">'meta.roles'</span>, {</span><br><span class="line">  <span class="hljs-attr">ref</span>: <span class="hljs-string">'Role'</span>,</span><br><span class="line">  <span class="hljs-attr">localField</span>: <span class="hljs-string">'meta.role'</span>,</span><br><span class="line">  <span class="hljs-attr">foreignField</span>: <span class="hljs-string">'_id'</span>,</span><br><span class="line">  <span class="hljs-attr">justOne</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">  <span class="hljs-attr">autopopulate</span>: { <span class="hljs-attr">select</span>: <span class="hljs-string">'name'</span>, <span class="hljs-attr">maxDepth</span>: <span class="hljs-number">1</span> }</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line">MenuSchema.plugin(<span class="hljs-built_in">require</span>(<span class="hljs-string">'mongoose-autopopulate'</span>))</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意：这里要特别说明一下，因为这里的路由表是树状结构，最末尾的叶子，也就是最底层的 child 和 parent 中有两个字段的值是有区分的。一个是 <code>alwaysShow</code>，如果是叶子建议设置为 <code>false</code> ；另一个是<code>redirect</code>，在前端做数据清洗的时候，叶子中的这个值一定要设置为 <code>fasle</code>，<code>alwaysShow</code> 可以不设置，但是这项一定要设置。</p>
+</blockquote>
+<p>到这里，前端后端的路由表结构就都清楚了。</p>
+<p>还有一点顺带提一下，如果是一个显示时没有子菜单的菜单项，数据里，父项是不用设置 <code>name</code> 的.</p>
+<h2 id="建立路由组件映射表"><a href="#建立路由组件映射表" class="headerlink" title="建立路由组件映射表"></a>建立路由组件映射表</h2><p>对于这个映射表，我们有两种常用的方法来解决。</p>
+<h3 id="由前端维护一份静态路由组件映射表"><a href="#由前端维护一份静态路由组件映射表" class="headerlink" title="由前端维护一份静态路由组件映射表"></a>由前端维护一份静态路由组件映射表</h3><p>这是交由前端来维护的一份与后端一样的组件映射表。</p>
+<figure class="highlight javascript hljs"><figcaption><span># src/router/index.js</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> routerMap={</span><br><span class="line">  <span class="hljs-string">'Tree'</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@/views/tree/index'</span>),</span><br><span class="line">  <span class="hljs-string">'Form'</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@/views/form/index'</span>)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>面对这份路由组件映射表，实在是高兴不起来。既然后端已经保存有一份了，何苦再来手动维护一份映射表呢？所以还是写个方法，每次获得路由表的时候，都自动去匹配一次就好。所以也就有了下面这个动态替换的方法。</p>
+<h3 id="根据后端返回的路由表动态替换路由组件映射"><a href="#根据后端返回的路由表动态替换路由组件映射" class="headerlink" title="根据后端返回的路由表动态替换路由组件映射"></a>根据后端返回的路由表动态替换路由组件映射</h3><p>开发人员都是要想办法偷懒的，要不然不会有技术的进步。所以我们决定放弃手动维护一份映射表。</p>
+<figure class="highlight javascript hljs"><figcaption><span># src/store/modules/user.js</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">/* Layout */</span></span><br><span class="line"><span class="hljs-keyword">import</span> Layout <span class="hljs-keyword">from</span> <span class="hljs-string">'@/layout'</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * 动态生成路由组件映射表并替换</span></span><br><span class="line"><span class="hljs-comment"> *</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param <span class="hljs-type">{Array}</span> <span class="hljs-variable">serverRouterMap</span></span></span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@returns</span></span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">serverRouterMap</span>(<span class="hljs-params">serverRouter</span>) </span>{</span><br><span class="line">  <span class="hljs-keyword">const</span> res = []</span><br><span class="line"></span><br><span class="line">  serverRouter.forEach(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> {</span><br><span class="line">    <span class="hljs-keyword">const</span> router = { ...item }</span><br><span class="line">    <span class="hljs-keyword">if</span> (router.component === <span class="hljs-string">'Layout'</span>) {</span><br><span class="line">      <span class="hljs-comment">// Layout 要预先 import 进来</span></span><br><span class="line">      router.component = Layout</span><br><span class="line">    } <span class="hljs-keyword">else</span> {</span><br><span class="line">      <span class="hljs-keyword">let</span> views = router.component</span><br><span class="line">      views = views.replace(<span class="hljs-regexp">/^\/*/g</span>, <span class="hljs-string">''</span>)</span><br><span class="line">      <span class="hljs-comment">// 异步加载视图</span></span><br><span class="line">      <span class="hljs-comment">// router.component = () =&gt; import(`@/views/${views}`)</span></span><br><span class="line">      <span class="hljs-comment">// 更新了某个版本的 webpack 后，只能用这种写法了</span></span><br><span class="line">      router.component = <span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> <span class="hljs-built_in">require</span>([<span class="hljs-string">`@/views/<span class="hljs-subst">${views}</span>`</span>], resolve)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">if</span> (router.children &amp;&amp; router.children.length &gt; <span class="hljs-number">0</span>) {</span><br><span class="line">      router.children = serverRouterMap(router.children)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// 如果是最后的叶子节点，把 redirect 设置为 false</span></span><br><span class="line">    <span class="hljs-keyword">if</span> (router.redirect === <span class="hljs-string">'noRedirect'</span> &amp;&amp; router.children &amp;&amp; router.children.length === <span class="hljs-number">0</span>) {</span><br><span class="line">      router.redirect = <span class="hljs-literal">false</span></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    res.push(router)</span><br><span class="line">  })</span><br><span class="line">  <span class="hljs-keyword">return</span> res</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>到这里，主要的方法就搞定了，接下来按登录的流程来生成动态路由。</p>
+<h2 id="生成动态路由"><a href="#生成动态路由" class="headerlink" title="生成动态路由"></a>生成动态路由</h2><p>要生成动态路由，还是要先拿到数据。在 <code>src/store/modules/user.js</code> 的 actions 里找到 <code>getInfo</code>方法，因为和当前用户相关的数据，都是从这里拿的。</p>
+<figure class="highlight javascript hljs"><figcaption><span># src/store/modules/user.js</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// 从返回的数据中拿到 routes 数据</span></span><br><span class="line"><span class="hljs-keyword">const</span> { <span class="hljs-attr">roles</span>: role, username, avatar, routes } = data</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// 然后在合适的地方，调用 serverRouterMap() 方法，清洗并匹配路由组件映射后，重新赋值给 data.routes</span></span><br><span class="line">data.routes = serverRouterMap(routes)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>接下来，小小修改一下 <code>generateRoutes()</code> 方法。修改了接收的参数以及路由数据的来源，和你本地没修改过的方法，对照着改吧。</p>
+<figure class="highlight javascript hljs"><figcaption><span># src/store/modules/permission.js</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-title">generateRoutes</span>(<span class="hljs-params">{ commit }, data</span>)</span> {</span><br><span class="line">  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> {</span><br><span class="line">    <span class="hljs-keyword">let</span> accessedRoutes</span><br><span class="line">    <span class="hljs-keyword">const</span> { <span class="hljs-attr">routes</span>: serverAsyncRouterMap, roles } = data</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// generateRoutes 原来的写法</span></span><br><span class="line">    <span class="hljs-comment">// if (roles.includes('admin')) {</span></span><br><span class="line">    <span class="hljs-comment">//   accessedRoutes = asyncRoutes || []</span></span><br><span class="line">    <span class="hljs-comment">// } else {</span></span><br><span class="line">    <span class="hljs-comment">//   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)</span></span><br><span class="line">    <span class="hljs-comment">// }</span></span><br><span class="line">    <span class="hljs-comment">// 获取动态路由的写法</span></span><br><span class="line">    <span class="hljs-keyword">if</span> (roles.includes(<span class="hljs-string">'admin'</span>)) {</span><br><span class="line">      accessedRoutes = serverAsyncRouterMap</span><br><span class="line">    } <span class="hljs-keyword">else</span> {</span><br><span class="line">      accessedRoutes = filterAsyncRoutes(serverAsyncRouterMap, roles)</span><br><span class="line">    }</span><br><span class="line">    commit(<span class="hljs-string">'SET_ROUTES'</span>, accessedRoutes)</span><br><span class="line"></span><br><span class="line">    resolve(accessedRoutes)</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>接着就要 dispatch generateRoutes 来生成路由啦！</p>
+<figure class="highlight javascript hljs"><figcaption><span># src/permission.js</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// get user info</span></span><br><span class="line"><span class="hljs-comment">// 修改前的样子</span></span><br><span class="line"><span class="hljs-comment">// note: roles must be a object array! such as: ['admin'] or ,['developer','editor']</span></span><br><span class="line"><span class="hljs-keyword">const</span> { roles } = <span class="hljs-keyword">await</span> store.dispatch(<span class="hljs-string">'user/getInfo'</span>)</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// generate accessible routes map based on roles</span></span><br><span class="line"><span class="hljs-keyword">const</span> accessRoutes = <span class="hljs-keyword">await</span> store.dispatch(<span class="hljs-string">'permission/generateRoutes'</span>, roles)</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// 修改后的样子</span></span><br><span class="line"><span class="hljs-comment">// note: roles must be a object array! such as: ['admin'] or ,['developer','editor']</span></span><br><span class="line"><span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> store.dispatch(<span class="hljs-string">'user/getInfo'</span>)</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// generate accessible routes map based on roles</span></span><br><span class="line"><span class="hljs-keyword">const</span> accessRoutes = <span class="hljs-keyword">await</span> store.dispatch(<span class="hljs-string">'permission/generateRoutes'</span>, data)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>到这里，就全部结束了。<br>保存后，页面会自动刷新，你应该能看到最新的结果。</p>
+<h2 id="issue-中的相关讨论"><a href="#issue-中的相关讨论" class="headerlink" title="issue 中的相关讨论"></a>issue 中的相关讨论</h2><p>本文的思路来源于两个 issue 的讨论。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin/issues/286#issuecomment-349170518">手动维护一份路由组件映射表</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin/issues/293#issuecomment-510294344">动态匹配路由组件映射表</a></p>
+<p>最后，<a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin">vue-element-admin</a> 的项目地址。</p>
+</body></html>
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/javascript/">#javascript</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/vue/">#vue</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/vue-element-admin/">#vue-element-admin</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/Notes/guide-for-changing-dev-environment-from-mac-to-windows/">Guide for changing dev environment from Mac to Windows</a>
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/Technology/Python/create-video-with-moviepy/">Create video with Moviepy</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+<div class="comments">
+    <h3 class="title is-4">评论</h3>
+    
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://cuevven.github.io/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/';
+        this.page.identifier = 'Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/';
+        
+        this.language = 'zh';
+        
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'seeing-the-earth-from-mars' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</div>
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2021 Cuevven&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        target="_blank" rel="noopener" href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" target="_blank" rel="noopener" href="http://outdatedbrowser.com/">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("zh-CN");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+
+<script src="/js/script.js"></script>
+
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="站内搜索" />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>Create video with Moviepy - 從火星看地球</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Life is Fantastic">
+
+
+
+
+
+    <meta name="description" content="起因最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？ 需求＆思路我的思路是这样子的：  这个视频是 1080p 30fps； 我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示； 视频长度和 BGM 长度匹配； 获取相片并将相片分辨率处理成和视频一样； 按节拍创建剪辑片段； 合并剪辑，生成视频  准备工作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Create video with Moviepy">
+<meta property="og:url" content="https://cuevven.github.io/Technology/Python/create-video-with-moviepy/index.html">
+<meta property="og:site_name" content="從火星看地球">
+<meta property="og:description" content="起因最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？ 需求＆思路我的思路是这样子的：  这个视频是 1080p 30fps； 我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示； 视频长度和 BGM 长度匹配； 获取相片并将相片分辨率处理成和视频一样； 按节拍创建剪辑片段； 合并剪辑，生成视频  准备工作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-21T13:21:47.000Z">
+<meta property="article:modified_time" content="2021-06-14T15:43:01.564Z">
+<meta property="article:author" content="Cuevven">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="python3">
+<meta property="article:tag" content="moviepy">
+<meta property="article:tag" content="librosa">
+<meta property="article:tag" content="video">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    從火星看地球
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/#">Photograph</a>
+            
+            <a class="navbar-item "
+               href="/categories/Technology">Technology</a>
+            
+            <a class="navbar-item "
+               href="/categories/Notes">Notes</a>
+            
+            <a class="navbar-item "
+               href="/#">About</a>
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="搜索" href="javascript:;">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            <div class="navbar-item is-hoverable has-dropdown is-hidden-mobile is-hidden-tablet-only toc">
+                <a class="navbar-item" title="目录">
+                    <i class="fa fa-list"></i>
+                </a>
+                <div class="navbar-dropdown is-right">
+                    
+                    
+                    
+                    
+                    <a class="navbar-item" href="#起因">1&nbsp;&nbsp;<b>起因</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#需求＆思路">2&nbsp;&nbsp;<b>需求＆思路</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#准备工作">3&nbsp;&nbsp;<b>准备工作</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#正式开始">4&nbsp;&nbsp;<b>正式开始</b></a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#获取创建视频的一些参数">4.1&nbsp;&nbsp;获取创建视频的一些参数</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#获取相片并调整相片大小">4.2&nbsp;&nbsp;获取相片并调整相片大小</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#使用-librosa-分析-BGM-的节拍">4.3&nbsp;&nbsp;使用 librosa 分析 BGM 的节拍</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#创建视频剪辑（Clip）前的一些小准备">4.4&nbsp;&nbsp;创建视频剪辑（Clip）前的一些小准备</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#按节拍插入帧">4.5&nbsp;&nbsp;按节拍插入帧</a>
+                    
+                    
+                    
+                    <a class="navbar-item" href="#合并剪辑，生成视频">4.6&nbsp;&nbsp;合并剪辑，生成视频</a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#一个问题">5&nbsp;&nbsp;<b>一个问题</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#总结">6&nbsp;&nbsp;<b>总结</b></a>
+                    
+                </div>
+            </div>
+            
+            
+            <a class="navbar-item" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Create video with Moviepy
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2019-07-21T13:21:47.000Z" itemprop="datePublished">7月 21 2019</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/Technology/">Technology</a><span>></span><a class="article-category-link" href="/categories/Technology/Python/">Python</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            18 分钟 读完 (约 2668 字)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？</p>
+<h2 id="需求＆思路"><a href="#需求＆思路" class="headerlink" title="需求＆思路"></a>需求＆思路</h2><p>我的思路是这样子的：</p>
+<ol>
+<li>这个视频是 1080p 30fps；</li>
+<li>我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示；</li>
+<li>视频长度和 BGM 长度匹配；</li>
+<li>获取相片并将相片分辨率处理成和视频一样；</li>
+<li>按节拍创建剪辑片段；</li>
+<li>合并剪辑，生成视频</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>由于我机器上使用的是 python 3 的环境，所以需要有 python 3。</li>
+<li>建议在 python 的虚拟环境中运行这个项目。</li>
+<li>在虚拟环境中安装 <code>moviepy</code> <code>librosa</code> <code>click</code>三个包。</li>
+<li>如果要加字幕，还需要安装 <code>imagemagick</code>。</li>
+<li>如果需要对字幕做分词处理，再安装一个 <code>jieba</code>。</li>
+</ol>
+<span id="more"></span>
+
+<blockquote>
+<p>我用的是 macbook，所有的命令都是在 macos 环境中执行。linux 的过程大同小异，windows 下需要自行搞定 python。</p>
+</blockquote>
+<p>先分析一下最终的目录结构和文件</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── ./createVideoWithMoviepy.py <span class="hljs-comment"># 这篇要讲的主要的东西</span></span><br><span class="line">├── ./dist</span><br><span class="line">│&nbsp;&nbsp; └── ./dist/1353112775.mp4 <span class="hljs-comment"># 最后生成的视频，脚本会自动创建</span></span><br><span class="line">├── ./src</span><br><span class="line">│&nbsp;&nbsp; ├── ./src/font <span class="hljs-comment"># 如果要加字幕，这里放字体</span></span><br><span class="line">│&nbsp;&nbsp; ├── ./src/images -&gt; ~/.../idols/images_origin <span class="hljs-comment"># 资源源文件目录。这里是一个软链接，下文会解释</span></span><br><span class="line">│&nbsp;&nbsp; ├── ./src/imgs <span class="hljs-comment"># 处理过的图片资源目录，脚本会自动创建</span></span><br><span class="line">│&nbsp;&nbsp; ├── ./src/music <span class="hljs-comment"># BGM 目录</span></span><br><span class="line">│&nbsp;&nbsp; └── ./src/subtitles <span class="hljs-comment"># 如果有字幕，字幕的纯文本文档放在这里</span></span><br><span class="line">└── ./utils.py <span class="hljs-comment"># 一些工具脚本</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>假设 python3 环境已经存在。</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 创建项目目录</span></span><br><span class="line">mkdir -p ./{moviepy/dist,moviepy/src/imgs,moviepy/src/music}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>可有注意到，这里我没有创建<code>moviepy/src/images</code>这个目录？由于我爬取的相片在另外一个项目目录里<code>idols/images_origin</code>，所以这里将创建一个软链接来指向源目录。</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 进入 src 目录并观察创建软链接前后，目录里的变化</span></span><br><span class="line"><span class="hljs-built_in">cd</span> moviepy/src &amp;&amp; ll</span><br><span class="line">ln -s ~/idols/images_origin images</span><br><span class="line">ll</span><br></pre></td></tr></tbody></table></figure>
+
+<p>目录有了，接下来准备开发环境。</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 先确保在项目根目录。约定：以下操作，均约定在我们的 moviepy 项目目录中进行。</span></span><br><span class="line"><span class="hljs-built_in">cd</span> moviepy</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 创建虚拟环境。由于我的系统中有 python2 和 python3。</span></span><br><span class="line">python3 -m venv venv</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 激活虚拟环境</span></span><br><span class="line">. venv/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 如果需要退出虚拟环境，使用下面的指令</span></span><br><span class="line"><span class="hljs-comment"># deactivate</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>接下来，安装我们的依赖<code>moviepy</code> <code>librosa</code> <code>click</code>，另外，可能会需要处理图片，需要额外安装<code>PIL</code>。</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install moviepy librosa click</span><br><span class="line"><span class="hljs-comment"># 额外安装 PIL</span></span><br><span class="line">pip install pillow</span><br></pre></td></tr></tbody></table></figure>
+
+<p>最后，创建我们的两个脚本文件</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch createVideoWithMoviepy.py utils.py</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><h3 id="获取创建视频的一些参数"><a href="#获取创建视频的一些参数" class="headerlink" title="获取创建视频的一些参数"></a>获取创建视频的一些参数</h3><p>:param width: 生成视频的宽度 default: 1920<br>:param height: 生成视频的高度 default: 1080<br>:param images_origin: 源图片的路径<br>:param origin_target_dir: 将源路径替换为目标路径。<br>    这个项目的源路径是爬虫下载图片的路径，最后还要把下载的图片处理成和视频一样的大小存放在目标目录<br>    default: (‘./src/images’, ‘./src/imgs’)<br>:param music: 背景音乐路径<br>:param fps: 视频的帧率 default: 30<br>:param output: 生成视频的文件名</p>
+<p>如此，我们先来定义要获取的参数。这里用到了<a target="_blank" rel="noopener" href="https://github.com/pallets/click">Click</a>，它以简单的交互方式，帮助我在命令行模式下获取需要的参数值。</p>
+<figure class="highlight python hljs"><figcaption><span># createVideoWithMoviepy.py @python3</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="hljs-keyword">import</span> click</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@click.command()</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--width'</span>, prompt=<span class="hljs-string">'Width'</span>, default=<span class="hljs-number">1920</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The width of video clips'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--height'</span>, prompt=<span class="hljs-string">'Height'</span>, default=<span class="hljs-number">1080</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The height of video clips'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--images_origin'</span>, prompt=<span class="hljs-string">'images file'</span>, default=<span class="hljs-string">'./src/images'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The source images path'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--origin_target_dir'</span>, prompt=<span class="hljs-string">'replace origin dir to target dir'</span>, default=(<span class="hljs-params"><span class="hljs-string">'./src/images'</span>, <span class="hljs-string">'./src/imgs'</span></span>), <span class="hljs-built_in">help</span>=<span class="hljs-string">'how replace origin dir to target dir'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--music'</span>, prompt=<span class="hljs-string">'Music file'</span>, default=<span class="hljs-string">'./src/music/1302.mp3'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The music file'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--fps'</span>, prompt=<span class="hljs-string">'video fps '</span>, default=<span class="hljs-number">30</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The output video fps'</span></span>)</span></span><br><span class="line"><span class="hljs-meta">@click.option(<span class="hljs-params"><span class="hljs-string">'--output'</span>, prompt=<span class="hljs-string">'Output file'</span>, default=<span class="hljs-string">'./dist/1353112775.mp4'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'The output file name'</span></span>)</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="获取相片并调整相片大小"><a href="#获取相片并调整相片大小" class="headerlink" title="获取相片并调整相片大小"></a>获取相片并调整相片大小</h3><figure class="highlight python hljs"><figcaption><span># createVideoWithMoviepy.py @python3</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始加载库&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line"><span class="hljs-keyword">import</span> os</span><br><span class="line"><span class="hljs-keyword">import</span> math</span><br><span class="line"><span class="hljs-keyword">import</span> click</span><br><span class="line"><span class="hljs-comment"># 导入两个工具函数来处理图片，这里不展开说明，具体看源码</span></span><br><span class="line"><span class="hljs-keyword">from</span> utils <span class="hljs-keyword">import</span> resizeImage, readDir</span><br><span class="line"></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span>(<span class="hljs-params">width, height, images_origin, origin_target_dir, music, fps, output</span>):</span></span><br><span class="line">    <span class="hljs-comment"># 从源目录读取且经处理过的图片，将会保存到这个目录中，为了方便处理，这里尽量和源目录的结构保持一致</span></span><br><span class="line">    target_images_dir = images_origin.replace(origin_target_dir[<span class="hljs-number">0</span>], origin_target_dir[-<span class="hljs-number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment"># 如果目标目录不存在，则从源目录读取图片并进行处理，最后保存到目标目录</span></span><br><span class="line">    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(target_images_dir):</span><br><span class="line">        filesPath = readDir(images_origin)</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;已载入文件 %s 个'</span> % <span class="hljs-built_in">len</span>(filesPath))</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始调整图片大小&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line">        <span class="hljs-keyword">for</span> img <span class="hljs-keyword">in</span> filesPath:</span><br><span class="line">            resizeImage(img, origin_target_dir, (width, height))</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment"># 从目标目录中读取图片路径到一个列表里</span></span><br><span class="line">    <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始读取调整过的图片&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line">    filesPath = readDir(images_origin.replace(origin_target_dir[<span class="hljs-number">0</span>], origin_target_dir[-<span class="hljs-number">1</span>]))</span><br><span class="line">    <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;已载入文件 %s 个'</span> % <span class="hljs-built_in">len</span>(filesPath))</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment"># 如果文件列表长度为 0，则退出整个程序</span></span><br><span class="line">    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(filesPath) == <span class="hljs-number">0</span>:</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;请检查源目录 %s 下是否有图片。并且删除 %s 目录'</span> % (images_origin, origin_target_dir[-<span class="hljs-number">1</span>]))</span><br><span class="line">        os._exit(<span class="hljs-number">0</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="使用-librosa-分析-BGM-的节拍"><a href="#使用-librosa-分析-BGM-的节拍" class="headerlink" title="使用 librosa 分析 BGM 的节拍"></a>使用 librosa 分析 BGM 的节拍</h3><figure class="highlight python hljs"><figcaption><span># createVideoWithMoviepy.py @python3</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">import</span> librosa</span><br><span class="line"></span><br><span class="line">    <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始分析节拍&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line">    y, sr = librosa.load(music, sr=<span class="hljs-literal">None</span>)</span><br><span class="line">    tempo, beats = librosa.beat.beat_track(y=y, sr=sr)</span><br><span class="line">    beat_times = <span class="hljs-built_in">list</span>(librosa.frames_to_time(beats, sr=sr))</span><br><span class="line">    beat_times.append(beat_times[-<span class="hljs-number">1</span>] + <span class="hljs-number">1</span>) <span class="hljs-comment"># 增加一个空节拍点位，先记着有这么一回事，下面会讲</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="创建视频剪辑（Clip）前的一些小准备"><a href="#创建视频剪辑（Clip）前的一些小准备" class="headerlink" title="创建视频剪辑（Clip）前的一些小准备"></a>创建视频剪辑（Clip）前的一些小准备</h3><p>先简单说一下视频/动画的小原理，我们看到的每一秒画面，一般都是由很多帧组成的。在这个项目里，一秒画面有 30 帧（30fps）。而一个动作的连续画面，至少要有头尾两个动作关键帧。但是现在只有单幅的相片，表现不出一个完整的动作，所以我们最终的成品会是一个幻灯片。😅</p>
+<p>到这里就大概清楚了，如果要让一幅照片播放一秒，那就需要在这一秒里插入 30 帧。因为是单幅，所以这 30 帧就是这幅照片重复 30 次。</p>
+<p>项目要求我们按照节拍来显示相片，但是两个节拍之间的间隔可能不到一秒，所以相片的帧数可能有多有少，不一定是 30 帧。 而且一秒的画面停留时间太短，也就是一闪而过的效果，根本看不清，那怎么办呢？</p>
+<figure class="highlight python hljs"><figcaption><span>#createVideoWithMoviepy.py @python3</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clips = [] <span class="hljs-comment"># 创建一个空的 list，用来存放所有的剪辑</span></span><br><span class="line">audio_time = librosa.get_duration(filename=music)</span><br><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;音频时长(s):%f &gt;&gt;节拍数量：%s'</span> % (audio_time, <span class="hljs-built_in">len</span>(beat_times)))</span><br><span class="line"><span class="hljs-string">'''</span></span><br><span class="line"><span class="hljs-string">计算节拍数量和相片数量的差值比例，以计算需要在每幅相片后补足多少帧，</span></span><br><span class="line"><span class="hljs-string">这里计算的差值，是为了让相片能补足节拍的数量，多跨几个节拍，让每一幅相片停留更长时间。</span></span><br><span class="line"><span class="hljs-string">另外，这个算法有 bug，下面再说。</span></span><br><span class="line"><span class="hljs-string">'''</span></span><br><span class="line">interval = math.ceil(<span class="hljs-built_in">abs</span>( <span class="hljs-built_in">len</span>(beat_times) / <span class="hljs-built_in">len</span>(filesPath) ))</span><br><span class="line">filesPath = [f <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> filesPath <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>( interval )]</span><br><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;新的文件列表长度:%s'</span> % <span class="hljs-built_in">len</span>(filesPath))</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="按节拍插入帧"><a href="#按节拍插入帧" class="headerlink" title="按节拍插入帧"></a>按节拍插入帧</h3><figure class="highlight python hljs"><figcaption><span># createVideoWithMoviepy.py @python3</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始按节拍生成视频帧&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line"><span class="hljs-keyword">for</span> index, beat_time <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(beat_times[:-<span class="hljs-number">1</span>]):</span><br><span class="line">    <span class="hljs-keyword">if</span> index &gt;= <span class="hljs-built_in">len</span>( filesPath):</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;图片数量不足以匹配节拍，中止匹配。输出的视频后段可能会出现黑屏。'</span>)</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;图片数量：{0} &gt;节拍数量：{1}'</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">len</span>( filesPath), <span class="hljs-built_in">len</span>(beat_times)))</span><br><span class="line">        <span class="hljs-keyword">break</span></span><br><span class="line">    <span class="hljs-built_in">print</span>(<span class="hljs-string">f'<span class="hljs-subst">{index + <span class="hljs-number">1</span>}</span>/<span class="hljs-subst">{<span class="hljs-built_in">len</span>(beat_times)}</span>&gt;&gt;<span class="hljs-subst">{ filesPath[index]}</span>'</span>)</span><br><span class="line">    <span class="hljs-string">'''</span></span><br><span class="line"><span class="hljs-string">    说下 time_deff 的作用：</span></span><br><span class="line"><span class="hljs-string">        因为每个节拍间的间隔时间非常短，所以计算节拍间的间隔再乘以帧率，</span></span><br><span class="line"><span class="hljs-string">        得出这幅画面在这个节拍应该停留的时间</span></span><br><span class="line"><span class="hljs-string">    '''</span>`</span><br><span class="line">    time_diff = math.modf(beat_time - beat_times[index -<span class="hljs-number">1</span>])</span><br><span class="line">    time_diff = math.ceil(time_diff[<span class="hljs-number">0</span>]*<span class="hljs-number">10</span>) <span class="hljs-keyword">if</span> (time_diff[<span class="hljs-number">0</span>] * <span class="hljs-number">10</span>) &gt; time_diff[-<span class="hljs-number">1</span>] <span class="hljs-keyword">else</span> math.ceil(time_diff[-<span class="hljs-number">1</span>])</span><br><span class="line">    image_clip = (ImageClip(filesPath[index], duration=<span class="hljs-built_in">abs</span>(time_diff)*fps)</span><br><span class="line">                .set_fps(<span class="hljs-built_in">abs</span>(time_diff)*fps)</span><br><span class="line">                .set_start(beat_time)</span><br><span class="line">                .set_end(beat_times[index + <span class="hljs-number">1</span>])) <span class="hljs-comment">#还记得上面增加的那个空节拍点位么？需要给最后一帧一个结束时间，所以这里增加了一个空点位来处理</span></span><br><span class="line">    image_clip = image_clip.set_pos(<span class="hljs-string">'center'</span>)</span><br><span class="line">    <span class="hljs-comment"># 两幅不同的相片间的过渡方式，duration 的值可以随意更改，不过可能会增加视频压制的时间</span></span><br><span class="line">    <span class="hljs-keyword">if</span> index % interval == <span class="hljs-number">0</span>:</span><br><span class="line">        image_clip = image_clip.fx(vfx.fadein, duration=<span class="hljs-number">0.5</span>)</span><br><span class="line">    clips.append(image_clip)</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="合并剪辑，生成视频"><a href="#合并剪辑，生成视频" class="headerlink" title="合并剪辑，生成视频"></a>合并剪辑，生成视频</h3><p>终于到最后一步了！</p>
+<figure class="highlight python hljs"><figcaption><span># createVideoWithMoviepy.py</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;开始合并剪辑，生成视频&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>)</span><br><span class="line">final_clip = CompositeVideoClip(clips) <span class="hljs-comment"># 合并所有视频剪辑</span></span><br><span class="line">audio_clip = AudioFileClip(music) <span class="hljs-comment"># 创建一个音频剪辑</span></span><br><span class="line">final_video = final_clip.set_audio(audio_clip) <span class="hljs-comment"># 加入音频剪辑</span></span><br><span class="line"><span class="hljs-comment"># 最后写入视频文件，moviepy 会调用 ffmpeg 来压制最后的视频，没有这个包，也得装上</span></span><br><span class="line">final_video.write_videofile(</span><br><span class="line">    output,　<span class="hljs-comment"># 输出路径和文件名</span></span><br><span class="line">    fps=fps, <span class="hljs-comment"># 帧率</span></span><br><span class="line">    codec=<span class="hljs-string">'mpeg4'</span>, <span class="hljs-comment"># 视频编码</span></span><br><span class="line">    <span class="hljs-comment"># ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, placebo</span></span><br><span class="line">    preset=<span class="hljs-string">'medium'</span>, <span class="hljs-comment"># 压缩速度</span></span><br><span class="line">    audio_codec=<span class="hljs-string">"libmp3lame"</span>, <span class="hljs-comment"># 音频编码，适用 .mp3</span></span><br><span class="line">    threads=<span class="hljs-number">4</span>, <span class="hljs-comment"># 压缩线程</span></span><br><span class="line">    bitrate =<span class="hljs-string">'6000k'</span>) <span class="hljs-comment"># 视频比特率，1080p 30fps 的动态比特率是 4000k~6000k</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="一个问题"><a href="#一个问题" class="headerlink" title="一个问题"></a>一个问题</h2><p>还记得上面提到的那个 bug 吗？<br>这里面有一些问题，如果图片数量多于节拍数？如果补齐节拍数量后的图片 list length 多于节拍数？<br>如何确定匹配 bgm 节拍的最佳图片数量和帧率？</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这个脚本问题还是挺多的，但是完成了我最初的要求。唯一不满意的就是这是一个加了 BGM 的幻灯片，我下次还是爬视频吧。</p>
+<p>moviepy 做逐帧动画不是强项，效率低于 opencv，但是如果想要批量修改一些比较相似的视频剪辑，还是可以用的。这货有一个大缺点，就是太费内存了，文档也不够友好。但是，好用就够了。</p>
+<p>librosa 这个库也很强大，能够各种分析音频，对声音领域有要求的小伙伴可以试试。</p>
+<p>大家关心的源码，<a target="_blank" rel="noopener" href="https://github.com/cuevven/createVideoWithMoviepy">Create video with Moviepy</a></p>
+</body></html>
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/python/">#python</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/python3/">#python3</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/moviepy/">#moviepy</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/librosa/">#librosa</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/video/">#video</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/Technology/Javascript/how-to-generate-dynamic-route-in-vue-element-admin-project/">在 vue-element-admin 怎样动态生成路由配置？</a>
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-next">
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+<div class="comments">
+    <h3 class="title is-4">评论</h3>
+    
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://cuevven.github.io/Technology/Python/create-video-with-moviepy/';
+        this.page.identifier = 'Technology/Python/create-video-with-moviepy/';
+        
+        this.language = 'zh';
+        
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'seeing-the-earth-from-mars' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</div>
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2021 Cuevven&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        target="_blank" rel="noopener" href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" target="_blank" rel="noopener" href="http://outdatedbrowser.com/">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("zh-CN");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+
+<script src="/js/script.js"></script>
+
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="站内搜索" />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+</body>
+</html>
