@@ -2,7 +2,7 @@
 <html class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8">
-<title>标签: video - 從火星看地球</title>
+<title>标签: API Mock - 從火星看地球</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -19,7 +19,7 @@
     <meta name="description" content="Life is Fantastic">
 <meta property="og:type" content="website">
 <meta property="og:title" content="從火星看地球">
-<meta property="og:url" content="https://cuevven.github.io/tags/video/index.html">
+<meta property="og:url" content="https://cuevven.github.io/tags/API-Mock/index.html">
 <meta property="og:site_name" content="從火星看地球">
 <meta property="og:description" content="Life is Fantastic">
 <meta property="og:locale" content="zh_CN">
@@ -125,7 +125,7 @@
     <section class="section section-heading">
     <div class="container">
         <div class="content">
-            <h5>#video</h5>
+            <h5>#API Mock</h5>
         </div>
     </div>
 </section>
@@ -135,50 +135,52 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            <a href="/Technology/Python/create-video-with-moviepy/" itemprop="url">Create video with Moviepy</a>
+            <a href="/Notes/miragejs/" itemprop="url">MirageJS</a>
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
         <span class="column is-narrow">
             
-                <time datetime="2019-07-21T13:21:47.000Z" itemprop="datePublished">7月 21 2019</time>
+                <time datetime="2021-09-01T13:41:05.000Z" itemprop="datePublished">9月 1 2021</time>
             
         </span>
         
         <span class="column is-narrow article-category">
             <i class="far fa-folder"></i>
-            <a class="article-category-link" href="/categories/Technology/">Technology</a><span>></span><a class="article-category-link" href="/categories/Technology/Python/">Python</a>
+            <a class="article-category-link" href="/categories/Notes/">Notes</a>
         </span>
         
         
         <span class="column is-narrow">
             
             
-            18 分钟 读完 (约 2668 字)
+            10 分钟 读完 (约 1520 字)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <html><head></head><body><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近在学 scrapy 爬虫，顺手从微博上爬了张子枫和谭松韵的微博相片。然后就想，要不就顺手用爬的相片做个视频出来？</p>
-<h2 id="需求＆思路"><a href="#需求＆思路" class="headerlink" title="需求＆思路"></a>需求＆思路</h2><p>我的思路是这样子的：</p>
-<ol>
-<li>这个视频是 1080p 30fps；</li>
-<li>我要给这个视频选一首好听的 BGM，然后每一幅相片都按 BGM 的节拍来显示；</li>
-<li>视频长度和 BGM 长度匹配；</li>
-<li>获取相片并将相片分辨率处理成和视频一样；</li>
-<li>按节拍创建剪辑片段；</li>
-<li>合并剪辑，生成视频</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
-<li>由于我机器上使用的是 python 3 的环境，所以需要有 python 3。</li>
-<li>建议在 python 的虚拟环境中运行这个项目。</li>
-<li>在虚拟环境中安装 <code>moviepy</code> <code>librosa</code> <code>click</code>三个包。</li>
-<li>如果要加字幕，还需要安装 <code>imagemagick</code>。</li>
-<li>如果需要对字幕做分词处理，再安装一个 <code>jieba</code>。</li>
-</ol></body></html>
+        <html><head></head><body><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Mirage 是一个让前端开发人员模拟后端 API 的 JavaScript 库。</p>
+<p>Mirage 在浏览器中运行。它能拦截 Javascript 应用程序发出的任何 <code>XMLHttpRequest</code> 或 <code>fetch</code> 请求，并允许模拟这些请求所对应的响应结果。</p>
+<p>Mirage 除了拦截 HTTP 请求外，还提供了一个模拟数据库和一系列辅助函数，可以轻松模拟后端服务。</p>
+<p>Mirage 借鉴了典型的 API 服务端框架的概念，拥有例如：</p>
+<ul>
+<li>处理 HTTP 请求的路由（routes）</li>
+<li>数据库（database）和数据模型（models），用于存储数据 和定义数据之间的关系</li>
+<li><code>factories</code>(模型工厂) and <code>fixtures </code>for<code> stubbing data(数据填充)</code></li>
+<li>用于格式化 HTTP 响应的序列化函数（serializers）</li>
+</ul>
+<blockquote>
+<p>总结， Mirage 是一个 API Mock 服务器</p>
+</blockquote>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Mirage 很容易可以集成到现有项目中。</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev miragejs</span><br><span class="line"><span class="hljs-comment"># or</span></span><br><span class="line">yarn add --dev miragejs</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>Mirage 可以通过 路由处理器（route handlers）轻易的模拟一个 API 请求的响应结果。</p></body></html>
         <p class="article-more-link">
-            <a href="/Technology/Python/create-video-with-moviepy/#more">阅读更多</a>
+            <a href="/Notes/miragejs/#more">阅读更多</a>
         </p>
     
     </div>
