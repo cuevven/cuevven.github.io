@@ -135,7 +135,58 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            <a href="/Notes/Mirage-JS/miragejs-quickstarts-part-1-overview/" itemprop="url">MirageJS Quickstarts Part 1 - Overview</a>
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-route-handlers/" itemprop="url">MirageJS Part 2 - Main Concepts - Route handlers</a>
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2021-09-08T13:17:58.000Z" itemprop="datePublished">9月 8 2021</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/Notes/">Notes</a><span>></span><a class="article-category-link" href="/categories/Notes/Mirage-JS/">Mirage-JS</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            14 分钟 读完 (约 2141 字)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><h2 id="路由处理器（Route-handlers）"><a href="#路由处理器（Route-handlers）" class="headerlink" title="路由处理器（Route handlers）"></a>路由处理器（Route handlers）</h2><p>前一章节已经快速了解过路由处理器的工作模式，这一节着重了解路由处理器中一些参数的意义。先从路由的两个定义方法开始。</p>
+<h3 id="路由处理器的定义（Define-route-handlers）"><a href="#路由处理器的定义（Define-route-handlers）" class="headerlink" title="路由处理器的定义（Define route handlers）"></a>路由处理器的定义（Define route handlers）</h3><p>最简单的方法是直接在路由的第二个参数返回一个对象作为响应的数据，为了便于记忆，可以称之为对象式：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/movies"</span>, { <span class="hljs-attr">movies</span>: [<span class="hljs-string">"Interstellar"</span>, <span class="hljs-string">"Inception"</span>, <span class="hljs-string">"Dunkirk"</span>] })</span><br></pre></td></tr></tbody></table></figure>
+
+<p>接下来是平时比较常用的函数式路由：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/movies"</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">return</span> [<span class="hljs-string">"Interstellar"</span>, <span class="hljs-string">"Inception"</span>, <span class="hljs-string">"Dunkirk"</span>]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>函数式路由可以灵活方便的访问 Mirage 的数据层和请求对象。</strong>大多数时候都使用函数式路由。</p>
+<p>你可以使用任何 HTTP 动词来定义路由，它们的定义方法都是一样的，第一个参数表示 API URL，第二个参数通常是一个用来返回响应数据的函数。</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// this.[HTTP verbs].(API_URL, () =&gt; {})</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.put(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.options(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br></pre></td></tr></tbody></table></figure></body></html>
+        <p class="article-more-link">
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-route-handlers/#more">阅读更多</a>
+        </p>
+    
+    </div>
+    
+    
+</article>
+
+
+
+
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            <a href="/Notes/Mirage-JS/miragejs-part-1-overview/" itemprop="url">MirageJS Part 1 - Overview</a>
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
@@ -143,7 +194,6 @@
             
                 <time datetime="2021-09-01T13:41:05.000Z" itemprop="datePublished">9月 1 2021</time>
             
-            <span class="second-date-block"> (updated: 9月 1 2021)</span>
         </span>
         
         <span class="column is-narrow article-category">
@@ -183,7 +233,7 @@
 
 <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>Mirage 可以通过 路由处理器（route handlers）轻易的模拟一个 API 请求的响应结果。</p></body></html>
         <p class="article-more-link">
-            <a href="/Notes/Mirage-JS/miragejs-quickstarts-part-1-overview/#more">阅读更多</a>
+            <a href="/Notes/Mirage-JS/miragejs-part-1-overview/#more">阅读更多</a>
         </p>
     
     </div>
@@ -206,7 +256,6 @@
             
                 <time datetime="2020-03-18T08:26:06.000Z" itemprop="datePublished">3月 18 2020</time>
             
-            <span class="second-date-block"> (updated: 6月 14 2021)</span>
         </span>
         
         <span class="column is-narrow article-category">
