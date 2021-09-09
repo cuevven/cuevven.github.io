@@ -128,6 +128,69 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/" itemprop="url">MirageJS Part 2 - Main Concepts - Shorthands</a>
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2021-09-09T13:13:00.000Z" itemprop="datePublished">9月 9 2021</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/Notes/">Notes</a><span>></span><a class="article-category-link" href="/categories/Notes/Mirage-JS/">Mirage-JS</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            10 分钟 读完 (约 1445 字)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><p>API 正变得越发的标准化，因此，Mirage 引入了 <em>路由缩写 <code>shoorthands</code></em> 的概念来替代许多自定义路由处理器的编写，从而可以更轻松的编写，也极大地简化了路由处理器的定义。</p>
+<p>例如，这个非常标准的函数式路由，它将返回一个与路径同名的数据集合：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">return</span> schema.movies.all()</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>同时，也可以使用路由缩写来完成相同的工作：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是一个完整的路由。它能从路径的最后一部分推断模型名称，并返回同名的数据集合。</p>
+<p>如果通过查询 ID 得到单条数据，也是非常简单的：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies/:id'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>使用路由缩写同样可以完成新建或者编辑数据。这也是一个标准的路由，它使用请求体中的一个属性 <code>movie</code> 来创建一条新的数据：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> attrs = <span class="hljs-built_in">JSON</span>.parse(request.requestBody).movie</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> schema.movies.create(attrs)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>同样的工作也可以使用缩写来完成：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>路由缩写使用基于 HTTP 动词的默认状态码:</p>
+<ul>
+<li>GET, PATCH/PUT, DEL 200</li>
+<li>POST 201</li>
+</ul></body></html>
+        <p class="article-more-link">
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/#more">阅读更多</a>
+        </p>
+    
+    </div>
+    
+    
+</article>
+
+
+
+
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
             <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-route-handlers/" itemprop="url">MirageJS Part 2 - Main Concepts - Route handlers</a>
         
     </h1>
@@ -198,7 +261,7 @@
         <span class="column is-narrow">
             
             
-            17 分钟 读完 (约 2570 字)
+            17 分钟 读完 (约 2596 字)
         </span>
         
     </div>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>MirageJS Part 2 - Main Concepts - Shorthands - 從火星看地球</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Life is Fantastic">
+
+
+
+
+
+    <meta name="description" content="API 正变得越发的标准化，因此，Mirage 引入了 路由缩写 shoorthands 的概念来替代许多自定义路由处理器的编写，从而可以更轻松的编写，也极大地简化了路由处理器的定义。 例如，这个非常标准的函数式路由，它将返回一个与路径同名的数据集合： 123this.get(&#39;&#x2F;movies&#39;, (schema, request) &#x3D;&gt; {  return schema.movies.al">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MirageJS Part 2 - Main Concepts - Shorthands">
+<meta property="og:url" content="https://cuevven.github.io/Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/index.html">
+<meta property="og:site_name" content="從火星看地球">
+<meta property="og:description" content="API 正变得越发的标准化，因此，Mirage 引入了 路由缩写 shoorthands 的概念来替代许多自定义路由处理器的编写，从而可以更轻松的编写，也极大地简化了路由处理器的定义。 例如，这个非常标准的函数式路由，它将返回一个与路径同名的数据集合： 123this.get(&#39;&#x2F;movies&#39;, (schema, request) &#x3D;&gt; {  return schema.movies.al">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-09T13:13:00.000Z">
+<meta property="article:modified_time" content="2021-09-09T13:13:00.000Z">
+<meta property="article:author" content="Cuevven">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="mock">
+<meta property="article:tag" content="API Mock">
+<meta property="article:tag" content="MirageJS">
+<meta property="article:tag" content="mirage">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    從火星看地球
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/#">Photograph</a>
+            
+            <a class="navbar-item "
+               href="/categories/Technology">Technology</a>
+            
+            <a class="navbar-item "
+               href="/categories/Notes">Notes</a>
+            
+            <a class="navbar-item "
+               href="/#">About</a>
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="搜索" href="javascript:;">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            <div class="navbar-item is-hoverable has-dropdown is-hidden-mobile is-hidden-tablet-only toc">
+                <a class="navbar-item" title="目录">
+                    <i class="fa fa-list"></i>
+                </a>
+                <div class="navbar-dropdown is-right">
+                    
+                    
+                    
+                    
+                    <a class="navbar-item" href="#路由缩写：GET-方法（GET-Shorthands）">1&nbsp;&nbsp;<b>路由缩写：GET 方法（GET Shorthands）</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#路由缩写：POST-方法（POST-Shorthands）">2&nbsp;&nbsp;<b>路由缩写：POST 方法（POST Shorthands）</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#路由缩写：PATCH-PUT-方法（PATCH-PUT-Shorthands）">3&nbsp;&nbsp;<b>路由缩写：PATCH/PUT 方法（PATCH/PUT Shorthands）</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#路由缩写：DELETE-方法（DELETE-Shorthands）">4&nbsp;&nbsp;<b>路由缩写：DELETE 方法（DELETE Shorthands）</b></a>
+                    
+                    
+                    <hr class="navbar-divider">
+                    
+                    
+                    <a class="navbar-item" href="#路由缩写：resource-方法（Resource-helper）">5&nbsp;&nbsp;<b>路由缩写：resource 方法（Resource helper）</b></a>
+                    
+                </div>
+            </div>
+            
+            
+            <a class="navbar-item" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            MirageJS Part 2 - Main Concepts - Shorthands
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2021-09-09T13:13:00.000Z" itemprop="datePublished">9月 9 2021</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/Notes/">Notes</a><span>></span><a class="article-category-link" href="/categories/Notes/Mirage-JS/">Mirage-JS</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            10 分钟 读完 (约 1445 字)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><p>API 正变得越发的标准化，因此，Mirage 引入了 <em>路由缩写 <code>shoorthands</code></em> 的概念来替代许多自定义路由处理器的编写，从而可以更轻松的编写，也极大地简化了路由处理器的定义。</p>
+<p>例如，这个非常标准的函数式路由，它将返回一个与路径同名的数据集合：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">return</span> schema.movies.all()</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>同时，也可以使用路由缩写来完成相同的工作：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是一个完整的路由。它能从路径的最后一部分推断模型名称，并返回同名的数据集合。</p>
+<p>如果通过查询 ID 得到单条数据，也是非常简单的：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies/:id'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>使用路由缩写同样可以完成新建或者编辑数据。这也是一个标准的路由，它使用请求体中的一个属性 <code>movie</code> 来创建一条新的数据：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> attrs = <span class="hljs-built_in">JSON</span>.parse(request.requestBody).movie</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> schema.movies.create(attrs)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>同样的工作也可以使用缩写来完成：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>路由缩写使用基于 HTTP 动词的默认状态码:</p>
+<ul>
+<li>GET, PATCH/PUT, DEL 200</li>
+<li>POST 201</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="路由缩写：GET-方法（GET-Shorthands）"><a href="#路由缩写：GET-方法（GET-Shorthands）" class="headerlink" title="路由缩写：GET 方法（GET Shorthands）"></a>路由缩写：GET 方法（GET Shorthands）</h3><p>获取集合：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>) <span class="hljs-comment">// finds type by singularizing url</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>, <span class="hljs-string">"users"</span>) <span class="hljs-comment">// optionally specify the collection as second param</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>, <span class="hljs-function">(<span class="hljs-params">schema</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">return</span> schema.contacts.all() <span class="hljs-comment">// users in the second case</span></span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<blockquote class="colorquote info"><p>上面例子中有传入第二参数的用法，我还没试过，不知道是什么情况…</p>
+<p>updated: 但是，翻了一下源码，发现第二个参数指的是指定一个用于查询的模型/集合名称。<br>由于 Mirage 的路由缩写会从请求路径中推断模型/集合名称，当路径中指代的模型/集合名称不是真正的模型/集合时，查询就会出错。</p>
+<p>换句话说，你在数据库中定义的模型叫 <code>user</code> ，但是在构建 API 请求路径时使用的是 <code>/contacts</code> ，这必然是查询不到数据的，所以通过第二个参数传入真正的模型/集合名称用于查询。</p>
+<p>以上，个人从源码中理解而来，详细例子可以查看<a href="#%E8%B7%AF%E7%94%B1%E7%BC%A9%E5%86%99%EF%BC%9Aresource-%E6%96%B9%E6%B3%95%EF%BC%88Resource-helper%EF%BC%89">路由缩写：resource-方法（Resource-helper）</a>部分。</p>
+<p>下面几个路由缩写的例子中，如果不做特别说明，均照此解释。</p>
+</blockquote>
+
+<p>获取模型：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>) <span class="hljs-comment">// finds type by singularizing url</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-string">"user"</span>) <span class="hljs-comment">// optionally specify the type as second param</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> id = request.params.id</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> schema.contacts.find(id) <span class="hljs-comment">// users in the second case</span></span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>通过多个 ID 获取模型， <code>GET /contacts?ids=1,2,3</code>：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>, { <span class="hljs-attr">coalesce</span>: <span class="hljs-literal">true</span> })</span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>, <span class="hljs-string">"users"</span>, { <span class="hljs-attr">coalesce</span>: <span class="hljs-literal">true</span> })</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>, <span class="hljs-function">(<span class="hljs-params">{ contacts }, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> ids = request.queryParams.ids</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> contacts.find(ids) <span class="hljs-comment">// users in the second case</span></span><br><span class="line">})</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="路由缩写：POST-方法（POST-Shorthands）"><a href="#路由缩写：POST-方法（POST-Shorthands）" class="headerlink" title="路由缩写：POST 方法（POST Shorthands）"></a>路由缩写：POST 方法（POST Shorthands）</h3><p>创建资源：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/contacts"</span>) <span class="hljs-comment">// finds type by singularizing url</span></span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/contacts"</span>, <span class="hljs-string">"user"</span>) <span class="hljs-comment">// optionally specify the type as second param</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/contacts"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">schema, request</span>) </span>{</span><br><span class="line">  <span class="hljs-keyword">let</span> attrs = <span class="hljs-built_in">this</span>.normalizedRequestAttrs()</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> schema.contacts.create(attrs)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>注意，要使 POST/PATCH/PUT 缩写生效，Mirage 需要知道应用发送的请求中所使用的 JSON 是哪一种格式，以便 POST 缩写可以用正确的方式将数据插入库中。</p>
+<p>更详细的信息请看 <code>serializer</code>部分中 <code>normalize</code> 的内容。</p>
+<h3 id="路由缩写：PATCH-PUT-方法（PATCH-PUT-Shorthands）"><a href="#路由缩写：PATCH-PUT-方法（PATCH-PUT-Shorthands）" class="headerlink" title="路由缩写：PATCH/PUT 方法（PATCH/PUT Shorthands）"></a>路由缩写：PATCH/PUT 方法（PATCH/PUT Shorthands）</h3><p>更新资源：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand (these also work with this.put)</span></span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">"/contacts/:id"</span>) <span class="hljs-comment">// finds type by singularizing url</span></span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-string">"user"</span>) <span class="hljs-comment">// optionally specify the type as second param</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">schema, request</span>) </span>{</span><br><span class="line">  <span class="hljs-keyword">let</span> id = request.params.id</span><br><span class="line">  <span class="hljs-keyword">let</span> attrs = <span class="hljs-built_in">this</span>.normalizedRequestAttrs()</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> schema.contacts.find(id).update(attrs)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="路由缩写：DELETE-方法（DELETE-Shorthands）"><a href="#路由缩写：DELETE-方法（DELETE-Shorthands）" class="headerlink" title="路由缩写：DELETE 方法（DELETE Shorthands）"></a>路由缩写：DELETE 方法（DELETE Shorthands）</h3><p>删除（destroying）资源：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>) <span class="hljs-comment">// finds type by singularizing url</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-string">"user"</span>) <span class="hljs-comment">// optionally specify the type as second param</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-function">(<span class="hljs-params">schema, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> id = request.params.id</span><br><span class="line"></span><br><span class="line">  schema.contacts.find(id).destroy()</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>删除资源和关系模型中的资源：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// Shorthand</span></span><br><span class="line"><span class="hljs-comment">// contact 模型和 addresses 模型是定义好的一对多模型</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>, [<span class="hljs-string">"contact"</span>, <span class="hljs-string">"addresses"</span>])</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// equivalent</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>, <span class="hljs-function">(<span class="hljs-params">{ contacts }, request</span>) =&gt;</span> {</span><br><span class="line">  <span class="hljs-keyword">let</span> id = request.params.id</span><br><span class="line">  <span class="hljs-keyword">let</span> contact = contacts.find(id)</span><br><span class="line"></span><br><span class="line">  contact.addresses.destroy()</span><br><span class="line">  contact.destroy()</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="路由缩写：resource-方法（Resource-helper）"><a href="#路由缩写：resource-方法（Resource-helper）" class="headerlink" title="路由缩写：resource 方法（Resource helper）"></a>路由缩写：resource 方法（Resource helper）</h3><p>需要特别说明一下，<code>this.resource()</code> 的第一参数是集合名称（以模型名称的复数形式表示集合，接触过数据库的应该都知道）。</p>
+<p>这个路由缩写可以方便的定义符合 RESTful 规范的资源路由：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="hljs-comment">// Resource helper usage</span></span><br><span class="line"><span class="hljs-built_in">this</span>.resource(<span class="hljs-string">"contacts"</span>)</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// Shorthands defined</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/contacts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">"/contacts/:id"</span>) <span class="hljs-comment">// and this.put('/contacts/:id')</span></span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>也可以指定一个白名单，以白名单为基础定义资源路由：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// 第二个参数中数组里必须传入有效的动作名称，完整的列表将在后面给出</span></span><br><span class="line"><span class="hljs-built_in">this</span>.resource(<span class="hljs-string">"contacts"</span>, { <span class="hljs-attr">only</span>: [<span class="hljs-string">"index"</span>, <span class="hljs-string">"show"</span>] })</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// Shorthands defined</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>或者指定一个排除列表，创建的资源路由中将不包含被排除的路由：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.resource(<span class="hljs-string">"contacts"</span>, { <span class="hljs-attr">except</span>: [<span class="hljs-string">"update"</span>] })</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// Shorthands defined</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/contacts/:id"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/contacts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/contacts/:id"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果路由路径和集合名称不匹配，也可以指定一个相对或者绝对路径：</p>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">this</span>.resource(<span class="hljs-string">"blog-posts"</span>, { <span class="hljs-attr">path</span>: <span class="hljs-string">"/posts"</span> })</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// Shorthands defined</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/posts"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">"/posts/:id"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">"/posts"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.put(<span class="hljs-string">"/posts/:id"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">"/posts/:id"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">"/posts/:id"</span>, <span class="hljs-string">"blog-posts"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>下面是完整的可用于 <code>only/except</code> 选项的有效动作名称以及所表示的路由缩写：</p>
+<figure class="highlight bash hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Action   |  Shorthand</span><br><span class="line">------------------------------</span><br><span class="line">index    | this.get(<span class="hljs-string">'/contacts'</span>)</span><br><span class="line">show     | this.get(<span class="hljs-string">'/contacts/:id'</span>)</span><br><span class="line">create   | this.post(<span class="hljs-string">'/contacts'</span>)</span><br><span class="line">update   | this.patch(<span class="hljs-string">'contacts/:id'</span>) (or this.put)</span><br><span class="line">delete   | this.del(<span class="hljs-string">'/contacts/:id'</span>)</span><br></pre></td></tr></tbody></table></figure></body></html>
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/javascript/">#javascript</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/mock/">#mock</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/API-Mock/">#API Mock</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/MirageJS/">#MirageJS</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/mirage/">#mirage</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-route-handlers/">MirageJS Part 2 - Main Concepts - Route handlers</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+<div class="comments">
+    <h3 class="title is-4">评论</h3>
+    
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://cuevven.github.io/Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/';
+        this.page.identifier = 'Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/';
+        
+        this.language = 'zh';
+        
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'seeing-the-earth-from-mars' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</div>
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2021 Cuevven&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        target="_blank" rel="noopener" href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" target="_blank" rel="noopener" href="https://github.com/cuevven">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" target="_blank" rel="noopener" href="http://outdatedbrowser.com/">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("zh-CN");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+
+<script src="/js/script.js"></script>
+
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="站内搜索" />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+</body>
+</html>

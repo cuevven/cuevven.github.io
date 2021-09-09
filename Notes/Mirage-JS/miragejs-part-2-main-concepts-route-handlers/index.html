@@ -220,11 +220,7 @@
 <p>你可以使用任何 HTTP 动词来定义路由，它们的定义方法都是一样的，第一个参数表示 API URL，第二个参数通常是一个用来返回响应数据的函数。</p>
 <figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// this.[HTTP verbs].(API_URL, () =&gt; {})</span></span><br><span class="line"><span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.post(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.patch(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.put(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.del(<span class="hljs-string">'/movies/:id'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br><span class="line"><span class="hljs-built_in">this</span>.options(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">() =&gt;</span> { ... });</span><br></pre></td></tr></tbody></table></figure>
 
-
-
 <span id="more"></span>
-
-
 
 <h3 id="定义API-响应延迟（Timing）"><a href="#定义API-响应延迟（Timing）" class="headerlink" title="定义API 响应延迟（Timing）"></a>定义API 响应延迟（Timing）</h3><p>路由处理器的定义方法提供了第三个可选的对象形参数用于定义 API 的响应延迟。</p>
 <p>响应延迟一般情况下用来模拟慢速网络对 API 的请求。</p>
@@ -246,7 +242,7 @@
 <p>延迟只在定义的断言中存活，每次断言运行后，Mirage 服务都会重置 <code>timing</code> ，所以不需要担心影响到测试的其他部分。</p>
 <h3 id="访问数据层（Accessing-the-data-layer）"><a href="#访问数据层（Accessing-the-data-layer）" class="headerlink" title="访问数据层（Accessing the data layer）"></a>访问数据层（Accessing the data layer）</h3><p>还记得函数式定义路由处理器时的第二个参数吗？有时候我们需要给作为第二个参数的方法传入一些参数用来完成一些事情，比如访问 Mirage 数据层或者接收请求参数。</p>
 <p>假设我们定义了一个数据模型  <code>movie</code> ，现在需要访问数据模型 <code>movie</code> ，传入第一个参数 <code>schema</code> ：</p>
-<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">createServer({</span><br><span class="line">  <span class="hljs-attr">models</span>: {</span><br><span class="line">    <span class="hljs-attr">movie</span>: Model,</span><br><span class="line">  },</span><br><span class="line">  <span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema</span>) =&gt;</span> {</span><br><span class="line">  	<span class="hljs-keyword">return</span> schema.movies.all()</span><br><span class="line">	})</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight javascript hljs"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">createServer({</span><br><span class="line">  <span class="hljs-attr">models</span>: {</span><br><span class="line">    <span class="hljs-attr">movie</span>: Model,</span><br><span class="line">  },</span><br><span class="line">  <span class="hljs-built_in">this</span>.get(<span class="hljs-string">'/movies'</span>, <span class="hljs-function">(<span class="hljs-params">schema</span>) =&gt;</span> {</span><br><span class="line">    <span class="hljs-keyword">return</span> schema.movies.all()</span><br><span class="line">  })</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
 
 
 
@@ -345,7 +341,9 @@
     
     
     <div class="columns is-mobile is-multiline article-nav">
-        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/Notes/Mirage-JS/miragejs-part-2-main-concepts-shorthands/">MirageJS Part 2 - Main Concepts - Shorthands</a>
             
         </span>
         <span class="column is-12-mobile is-half-desktop  article-nav-next">
